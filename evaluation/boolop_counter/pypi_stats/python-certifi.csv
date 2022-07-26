@@ -1,0 +1,7 @@
+,file_loc,num_boolops,num_lines_with_boolops,file
+0,20,0,0,python-certifi/setup.py
+1,9,0,0,python-certifi/certifi/__main__.py
+2,2,0,0,python-certifi/certifi/__init__.py
+3,31,0,0,python-certifi/certifi/core.py
+4,0,0,0,python-certifi/certifi/tests/__init__.py
+5,12,0,0,python-certifi/certifi/tests/test_certify.py

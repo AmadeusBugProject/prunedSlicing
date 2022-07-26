@@ -1,0 +1,13 @@
+,file_loc,num_boolops,num_lines_with_boolops,file
+0,11,1,1,typing/setup.py
+1,16,1,1,typing/typing_extensions/setup.py
+2,2223,44,42,typing/typing_extensions/src_py3/typing_extensions.py
+3,2115,7,7,typing/typing_extensions/src_py3/test_typing_extensions.py
+4,211,7,7,typing/typing_extensions/src_py2/typing_extensions.py
+5,428,1,1,typing/typing_extensions/src_py2/test_typing_extensions.py
+6,2622,2,2,typing/src/test_typing.py
+7,1915,58,54,typing/src/typing.py
+8,20,0,0,typing/src/mod_generics_cache.py
+9,2865,2,2,typing/python2/test_typing.py
+10,2023,67,62,typing/python2/typing.py
+11,11,0,0,typing/python2/mod_generics_cache.py

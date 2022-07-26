@@ -1,0 +1,6 @@
+astpretty
+parameterized
+pytest
+pandas
+timeout-decorator
+matplotlib

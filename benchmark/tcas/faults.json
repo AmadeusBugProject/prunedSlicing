@@ -1,0 +1,294 @@
+{
+  "Fault1": {
+    "line": 56,
+    "correct": "result = not(self.Own_Below_Threat()) or (self.Own_Below_Threat() and (not(self.Down_Separation >= self.ALIM())))",
+    "faulty":  "result = not(self.Own_Below_Threat()) or (self.Own_Below_Threat() and (not(self.Down_Separation > self.ALIM())))",
+    "description": "operator mutation"
+  },
+  "Fault2": {
+    "line": 46,
+    "correct": "return self.Up_Separation + NOZCROSS",
+    "faulty":  "return self.Up_Separation + MINSEP",
+    "description": "operand mutation"
+  },
+  "Fault3": {
+    "line": 81,
+    "correct": "intent_not_known = self.Two_of_Three_Reports_Valid and self.Other_RAC == NO_INTENT",
+    "faulty":  "intent_not_known = self.Two_of_Three_Reports_Valid or self.Other_RAC == NO_INTENT",
+    "description": "logic change"
+  },
+  "Fault4": {
+    "line": 58,
+    "correct": "result = self.Own_Above_Threat() and (self.Cur_Vertical_Sep >= MINSEP) and (self.Up_Separation >= self.ALIM())",
+    "faulty":  "result = self.Own_Above_Threat() and (self.Cur_Vertical_Sep >= MINSEP) or (self.Up_Separation >= self.ALIM())",
+    "description": "logic change"
+  },
+  "Fault5": {
+    "line": 79,
+    "correct": "enabled = self.High_Confidence and (self.Own_Tracked_Alt_Rate <= OLEV) and (self.Cur_Vertical_Sep > MAXALTDIFF)",
+    "faulty":  "enabled = self.High_Confidence and (self.Own_Tracked_Alt_Rate <= OLEV)",
+    "description": "missing code"
+  },
+  "Fault6": {
+    "line": 73,
+    "correct": "return self.Own_Tracked_Alt < self.Other_Tracked_Alt",
+    "faulty":  "return self.Own_Tracked_Alt <= self.Other_Tracked_Alt",
+    "description": "operator mutation"
+  },
+  "Fault7": {
+    "line": 14,
+    "correct": "POSITIVE_RA_ALT_THRESH_1 = 500",
+    "faulty":  "POSITIVE_RA_ALT_THRESH_1 = 550",
+    "description": "constant mutation"
+  },
+  "Fault8": {
+    "line": 16,
+    "correct": "POSITIVE_RA_ALT_THRESH_3 = 740",
+    "faulty":  "POSITIVE_RA_ALT_THRESH_3 = 700",
+    "description": "constant mutation"
+  },
+  "Fault9": {
+    "line": 62,
+    "correct": "if self.Inhibit_Biased_Climb() > self.Down_Separation:",
+    "faulty":  "if self.Inhibit_Biased_Climb() >= self.Down_Separation:",
+    "description": "operator mutation"
+  },
+  "Fault10": {
+    "line": [73, 76],
+    "correct": ["return self.Own_Tracked_Alt < self.Other_Tracked_Alt",
+      "return self.Other_Tracked_Alt < self.Own_Tracked_Alt"],
+    "faulty":  ["return self.Own_Tracked_Alt <= self.Other_Tracked_Alt",
+      "return self.Other_Tracked_Alt <= self.Own_Tracked_Alt"],
+    "description": "operator mutation"
+  },
+  "Fault11": {
+    "line": [73, 76, 86, 89, 90],
+    "correct": ["return self.Own_Tracked_Alt < self.Other_Tracked_Alt",
+      "return self.Other_Tracked_Alt < self.Own_Tracked_Alt",
+      "if need_upward_RA and need_downward_RA:",
+      "alt_sep = UNRESOLVED",
+      "elif need_upward_RA:"],
+    "faulty":  ["return self.Own_Tracked_Alt <= self.Other_Tracked_Alt",
+      "return self.Other_Tracked_Alt <= self.Own_Tracked_Alt",
+      "",
+      "",
+      "if need_upward_RA:"],
+    "description": "operator mutation, missing code"
+  },
+  "Fault12": {
+    "line": 79,
+    "correct": "enabled = self.High_Confidence and (self.Own_Tracked_Alt_Rate <= OLEV) and (self.Cur_Vertical_Sep > MAXALTDIFF)",
+    "faulty":  "enabled = self.High_Confidence or (self.Own_Tracked_Alt_Rate <= OLEV) and (self.Cur_Vertical_Sep > MAXALTDIFF)",
+    "description": "logic change"
+  },
+  "Fault13": {
+    "line": 1,
+    "correct": "OLEV = 600",
+    "faulty":  "OLEV = 600+100",
+    "description": "constant mutation"
+  },
+    "Fault14": {
+    "line": 2,
+    "correct": "MAXALTDIFF = 600",
+    "faulty":  "MAXALTDIFF = 600+50",
+    "description": "constant mutation"
+  },
+  "Fault15": {
+    "line": [3, 79],
+    "correct": ["MINSEP = 300",
+      "enabled = self.High_Confidence and (self.Own_Tracked_Alt_Rate <= OLEV) and (self.Cur_Vertical_Sep > MAXALTDIFF)"],
+    "faulty":  ["MINSEP = 300+350",
+      "enabled = self.High_Confidence and (self.Own_Tracked_Alt_Rate <= OLEV)"],
+    "description": "constant mutation, missing code"
+  },
+  "Fault16": {
+    "line": 13,
+    "correct": "POSITIVE_RA_ALT_THRESH_0 = 400",
+    "faulty":  "POSITIVE_RA_ALT_THRESH_0 = 400+1",
+    "description": "constant mutation"
+  },
+  "Fault17": {
+    "line": 14,
+    "correct": "POSITIVE_RA_ALT_THRESH_1 = 500",
+    "faulty":  "POSITIVE_RA_ALT_THRESH_1 = 500+1",
+    "description": "constant mutation"
+  },
+  "Fault18": {
+    "line": 15,
+    "correct": "POSITIVE_RA_ALT_THRESH_2 = 640",
+    "faulty":  "POSITIVE_RA_ALT_THRESH_2 = 640+50",
+    "description": "constant mutation"
+  },
+    "Fault19": {
+    "line": 16,
+    "correct": "POSITIVE_RA_ALT_THRESH_3 = 740",
+    "faulty":  "POSITIVE_RA_ALT_THRESH_3 = 740+20",
+    "description": "constant mutation"
+  },
+  "Fault20": {
+    "line": 51,
+    "correct": "if self.Inhibit_Biased_Climb() > self.Down_Separation:",
+    "faulty":  "if self.Inhibit_Biased_Climb() >= self.Down_Separation:",
+    "description": "operator mutation"
+  },
+  "Fault21": {
+    "line": 51,
+    "correct": "if self.Inhibit_Biased_Climb() > self.Down_Separation:",
+    "faulty":  "if self.Up_Separation + NOZCROSS > self.Down_Separation:",
+    "description": "operand mutation"
+  },
+  "Fault22": {
+    "line": 51,
+    "correct": "if self.Inhibit_Biased_Climb() > self.Down_Separation:",
+    "faulty":  "if self.Up_Separation > self.Down_Separation:",
+    "description": "operand mutation"
+  },
+  "Fault23": {
+    "line": 62,
+    "correct": "if self.Inhibit_Biased_Climb() > self.Down_Separation:",
+    "faulty":  "if self.Up_Separation + NOZCROSS > self.Down_Separation:",
+    "description": "operand mutation"
+  },
+  "Fault24": {
+    "line": 62,
+    "correct": "if self.Inhibit_Biased_Climb() > self.Down_Separation:",
+    "faulty":  "if self.Up_Separation > self.Down_Separation:",
+    "description": "operand mutation"
+  },
+  "Fault25": {
+    "line": 69,
+    "correct": "result = not(self.Own_Above_Threat()) or ((self.Own_Above_Threat()) and (self.Up_Separation >= self.ALIM()))",
+    "faulty":  "result = not(self.Own_Above_Threat()) or ((self.Own_Above_Threat()) and (self.Up_Separation > self.ALIM()))",
+    "description": "operator mutation"
+  },
+  "Fault26": {
+    "line": 79,
+    "correct": "enabled = self.High_Confidence and (self.Own_Tracked_Alt_Rate <= OLEV) and (self.Cur_Vertical_Sep > MAXALTDIFF)",
+    "faulty":  "enabled = self.High_Confidence and (self.Cur_Vertical_Sep > MAXALTDIFF)",
+    "description": "missing code"
+  },
+  "Fault27": {
+    "duplicate": true,
+    "info":   "duplicate of Fault5",
+    "line": 79,
+    "correct": "enabled = self.High_Confidence and (self.Own_Tracked_Alt_Rate <= OLEV) and (self.Cur_Vertical_Sep > MAXALTDIFF)",
+    "faulty":  "enabled = self.High_Confidence and (self.Own_Tracked_Alt_Rate <= OLEV)",
+    "description": "missing code"
+  },
+  "Fault28": {
+    "line": 45,
+    "correct": "if self.Climb_Inhibit > 0:",
+    "faulty":  "if self.Climb_Inhibit == 0:",
+    "description": "operator mutation"
+  },
+  "Fault29": {
+    "line": [45, 46, 47, 48],
+    "correct": ["if self.Climb_Inhibit > 0:",
+      "return self.Up_Separation + NOZCROSS",
+      "else:",
+      "return self.Up_Separation"],
+    "faulty":  ["return self.Up_Separation",
+      "",
+      "",
+      ""],
+    "description": "missing code"
+  },
+  "Fault30": {
+    "line": [45, 46, 47, 48],
+    "correct": ["if self.Climb_Inhibit > 0:",
+      "return self.Up_Separation + NOZCROSS",
+      "else:",
+      "return self.Up_Separation"],
+    "faulty":  ["return self.Up_Separation + NOZCROSS",
+      "",
+      "",
+      ""],
+    "description": "missing code"
+  },
+  "Fault31": {
+    "line": [56, 58, 84],
+    "correct": ["result = not(self.Own_Below_Threat()) or (self.Own_Below_Threat() and (not(self.Down_Separation >= self.ALIM())))",
+      "result = self.Own_Above_Threat() and (self.Cur_Vertical_Sep >= MINSEP) and (self.Up_Separation >= self.ALIM())",
+      "need_upward_RA = self.Non_Crossing_Biased_Climb() and self.Own_Below_Threat()"],
+    "faulty": ["result = not(self.Own_Below_Threat()) or (self.Own_Below_Threat() and (not(self.Down_Separation >= self.ALIM()))) \n            result = result and self.Own_Tracked_Alt <= self.Other_Tracked_Alt",
+      "result = self.Own_Above_Threat() and (self.Cur_Vertical_Sep >= MINSEP) and (self.Up_Separation >= self.ALIM()) \n            result = result and self.Own_Tracked_Alt < self.Other_Tracked_Alt",
+      "need_upward_RA = self.Non_Crossing_Biased_Climb()"],
+    "description": "additional code, missing code"
+  },
+  "Fault32": {
+    "line": [67, 69, 85],
+    "correct": ["result = self.Own_Below_Threat() and (self.Cur_Vertical_Sep >= MINSEP) and (self.Down_Separation >= self.ALIM())",
+      "result = not(self.Own_Above_Threat()) or ((self.Own_Above_Threat()) and (self.Up_Separation >= self.ALIM()))",
+      "need_downward_RA = self.Non_Crossing_Biased_Descend() and self.Own_Above_Threat()"],
+    "faulty": ["result = self.Own_Below_Threat() and (self.Cur_Vertical_Sep >= MINSEP) and (self.Down_Separation >= self.ALIM())\n            result = result and self.Other_Tracked_Alt < self.Own_Tracked_Alt",
+      "result = not(self.Own_Above_Threat()) or ((self.Own_Above_Threat()) and (self.Up_Separation >= self.ALIM()))\n            result = result and self.Other_Tracked_Alt <= self.Own_Tracked_Alt",
+      "need_downward_RA = self.Non_Crossing_Biased_Descend()"],
+    "description": "additional code, missing code"
+  },
+  "Fault33": {
+    "info": "not applicable because of array initialization style in python"
+  },
+  "Fault34": {
+    "line": 83,
+    "correct": "if enabled and ((tcas_equipped and intent_not_known) or not tcas_equipped):",
+    "faulty": "if enabled and tcas_equipped and intent_not_known or not tcas_equipped:",
+    "description": "missing parentheses"
+  },
+  "Fault35": {
+    "line": [46, 48],
+    "correct": ["return self.Up_Separation + NOZCROSS", "return self.Up_Separation"],
+    "faulty": ["return self.Up_Separation", "return self.Up_Separation + NOZCROSS"],
+    "description": "swapped then and else branch"
+  },
+  "Fault36": {
+    "line": 12,
+    "correct": "DOWNWARD_RA = 2",
+    "faulty": "DOWNWARD_RA = 1",
+    "description": "constant mutation"
+  },
+  "Fault37": {
+    "line": [35, 36, 37, 38, 39, 40, 41, 42],
+    "correct": ["if self.Alt_Layer_Value == 0:",
+      "return POSITIVE_RA_ALT_THRESH_0",
+      "elif self.Alt_Layer_Value == 1:",
+      "return POSITIVE_RA_ALT_THRESH_1",
+      "elif self.Alt_Layer_Value == 2:",
+      "return POSITIVE_RA_ALT_THRESH_2",
+      "else:",
+      "return POSITIVE_RA_ALT_THRESH_3"],
+    "faulty": ["return POSITIVE_RA_ALT_THRESH_0",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""],
+    "description": "missing code"
+  },
+  "Fault38": {
+    "info": "not applicable because of array initialization style in python"
+  },
+  "Fault39": {
+    "duplicate": true,
+    "info":   "duplicate of Fault25",
+    "line": 69,
+    "correct": "result = not(self.Own_Above_Threat()) or ((self.Own_Above_Threat()) and (self.Up_Separation >= self.ALIM()))",
+    "faulty":  "result = not(self.Own_Above_Threat()) or ((self.Own_Above_Threat()) and (self.Up_Separation > self.ALIM()))",
+    "description": "operator mutation"
+  },
+  "Fault40": {
+    "line": [56, 84],
+    "correct": ["result = not(self.Own_Below_Threat()) or (self.Own_Below_Threat() and (not(self.Down_Separation >= self.ALIM())))",
+      "need_upward_RA = self.Non_Crossing_Biased_Climb() and self.Own_Below_Threat()"],
+    "faulty": ["result = self.Own_Below_Threat() and (not(self.Down_Separation >= self.ALIM()))",
+      "need_upward_RA = self.Non_Crossing_Biased_Climb()"],
+    "description": "missing code"
+  },
+  "Fault41": {
+    "line": 58,
+    "correct": "result = self.Own_Above_Threat() and (self.Cur_Vertical_Sep >= MINSEP) and (self.Up_Separation >= self.ALIM())",
+    "faulty":  "result = (self.Cur_Vertical_Sep >= MINSEP) and (self.Up_Separation >= self.ALIM())",
+    "description": "missing code"
+  }
+}

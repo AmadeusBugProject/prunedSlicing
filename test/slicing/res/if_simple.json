@@ -1,0 +1,22 @@
+{
+  "testFile": "if_simple.py",
+  "functionName": "simple_if",
+  "testData": [
+    {
+      "input": [1,1],
+      "sliceVariable": "c",
+      "sliceLine": 5,
+      "dynamicSlice": [1,2,8],
+      "relevantSlice": [1,2,8],
+      "prunedSlice": [1,2,8]
+    },
+    {
+      "input": [1,0],
+      "sliceVariable": "c",
+      "sliceLine": 5,
+      "dynamicSlice": [1,3,4,8],
+      "relevantSlice": [1,3,4,8],
+      "prunedSlice": [1,3,4,8]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "testFile": "function_call_return.py",
+  "functionName": "call_function",
+  "testData": [
+    {
+      "input": [],
+      "sliceVariable": "b",
+      "sliceLine": 3,
+      "dynamicSlice": [1,3,10,11],
+      "relevantSlice": [1,3,10,11],
+      "prunedSlice": [1,3,10,11]
+    },
+    {
+      "input": [],
+      "sliceVariable": "c",
+      "sliceLine": 4,
+      "dynamicSlice": [1,2,3,4,10,11],
+      "relevantSlice": [1,2,3,4,10,11],
+      "prunedSlice": [1,2,3,4,10,11]
+    },
+    {
+      "input": [],
+      "sliceVariable": "d",
+      "sliceLine": 5,
+      "dynamicSlice": [1,2,5,10,11],
+      "relevantSlice": [1,2,5,10,11],
+      "prunedSlice": [1,2,5,10,11]
+    },
+    {
+      "input": [],
+      "sliceVariable": "f",
+      "sliceLine": 7,
+      "dynamicSlice": [1,2,7],
+      "relevantSlice": [1,2,7],
+      "prunedSlice": [1,2,7]
+    }
+  ]
+}

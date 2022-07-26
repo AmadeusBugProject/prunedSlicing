@@ -1,0 +1,5 @@
+,file_loc,num_boolops,num_lines_with_boolops,file
+0,10,0,0,six/setup.py
+1,977,14,14,six/test_six.py
+2,676,5,5,six/six.py
+3,22,0,0,six/documentation/conf.py

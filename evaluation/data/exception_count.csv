@@ -1,0 +1,132 @@
+,exception
+<class 'timeout_decorator.timeout_decorator.TimeoutError'>(),1367
+"<class 'slicing.slicing_exceptions.SlicingException'>('Lambda not supported',)",1240
+"<class 'NameError'>(""name 'day' is not defined"",)",697
+"<class 'IndexError'>('list index out of range',)",339
+"<class 'TypeError'>(""'int' object is not iterable"",)",240
+"<class 'slicing.slicing_exceptions.SlicingException'>('Delete not supported',)",154
+"<class 'IndexError'>('tuple index out of range',)",151
+"<class 'NameError'>(""name 'true' is not defined"",)",136
+"<class 'NameError'>(""name 'unique_day' is not defined"",)",102
+"<class 'NameError'>(""name 'count_dates' is not defined"",)",102
+"<class 'UnboundLocalError'>(""local variable 'i' referenced before assignment"",)",98
+"<class 'ValueError'>('list.remove(x): x not in list',)",96
+"<class 'NameError'>(""name 'a' is not defined"",)",83
+"<class 'TypeError'>(""'builtin_function_or_method' object is not subscriptable"",)",68
+"<class 'ValueError'>('max() arg is an empty sequence',)",55
+"<class 'NameError'>(""name 'Flase' is not defined"",)",51
+"<class 'TypeError'>('can only concatenate tuple (not ""int"") to tuple',)",49
+"<class 'NameError'>(""name 'sort' is not defined"",)",47
+"<class 'NameError'>(""name 'new' is not defined"",)",40
+"<class 'TypeError'>(""'NoneType' object is not iterable"",)",38
+"<class 'UnboundLocalError'>(""local variable 'result' referenced before assignment"",)",36
+"<class 'TypeError'>(""argument of type 'NoneType' is not iterable"",)",35
+"<class 'TypeError'>(""'int' object is not subscriptable"",)",35
+"<class 'UnboundLocalError'>(""local variable 'count' referenced before assignment"",)",34
+"<class 'NameError'>(""name 'possile_birthdays' is not defined"",)",34
+"<class 'NameError'>(""name 'counter' is not defined"",)",34
+"<class 'NameError'>(""name 'possible_birthday' is not defined"",)",34
+"<class 'TypeError'>(""'tuple' object cannot be interpreted as an integer"",)",32
+"<class 'TypeError'>(""'type' object is not iterable"",)",30
+"<class 'TypeError'>('can only concatenate list (not ""int"") to list',)",30
+"<class 'AttributeError'>(""'tuple' object has no attribute 'append'"",)",28
+"<class 'UnboundLocalError'>(""local variable 'position' referenced before assignment"",)",28
+"<class 'TypeError'>(""'NoneType' object is not subscriptable"",)",27
+"<class 'NameError'>(""name 'new_list' is not defined"",)",26
+"<class 'TypeError'>(""argument of type 'int' is not iterable"",)",25
+"<class 'TypeError'>('sort() takes no positional arguments',)",24
+"<class 'NameError'>(""name 'final' is not defined"",)",24
+"<class 'NameError'>(""name 'i' is not defined"",)",22
+"<class 'NameError'>(""name 'search' is not defined"",)",22
+"<class 'IndexError'>('pop index out of range',)",21
+"<class 'NameError'>(""name 'x' is not defined"",)",20
+"<class 'NameError'>(""name 'new_lst' is not defined"",)",20
+"<class 'TypeError'>(""object of type 'builtin_function_or_method' has no len()"",)",20
+"<class 'TypeError'>(""'list' object cannot be interpreted as an integer"",)",18
+"<class 'TypeError'>(""'>' not supported between instances of 'int' and 'tuple'"",)",18
+"<class 'NameError'>(""name 'birthday' is not defined"",)",17
+"<class 'TypeError'>('tuple indices must be integers or slices, not str',)",17
+"<class 'slicing.slicing_exceptions.SlicingException'>('Yield not supported',)",16
+"<class 'AttributeError'>(""'tuple' object has no attribute 'insert'"",)",15
+"<class 'AttributeError'>(""'NoneType' object has no attribute 'remove'"",)",15
+"<class 'AttributeError'>(""'builtin_function_or_method' object has no attribute 'remove'"",)",15
+"<class 'NameError'>(""name 'element' is not defined"",)",15
+"<class 'NameError'>(""name 'ele' is not defined"",)",14
+"<class 'TypeError'>(""'list' object is not callable"",)",14
+"<class 'RecursionError'>('maximum recursion depth exceeded while calling a Python object',)",13
+"<class 'NameError'>(""name 'lsst' is not defined"",)",12
+"<class 'RecursionError'>('maximum recursion depth exceeded',)",12
+"<class 'AttributeError'>(""'NoneType' object has no attribute 'reverse'"",)",12
+"<class 'AttributeError'>(""'list' object has no attribute 'removal'"",)",12
+"<class 'NameError'>(""name 'biggest' is not defined"",)",12
+"<class 'NameError'>(""name 'T' is not defined"",)",12
+"<class 'slicing.slicing_exceptions.SlicingException'>('Call construct not having any id or attr not supported',)",12
+"<class 'TypeError'>('can only concatenate tuple (not ""list"") to tuple',)",11
+"<class 'NameError'>(""name 'n' is not defined"",)",11
+"<class 'NameError'>(""name 'newlist' is not defined"",)",11
+"<class 'NameError'>(""name 'sorted_seq' is not defined"",)",11
+"<class 'NameError'>(""name 'elem' is not defined"",)",11
+"<class 'NameError'>(""name 'remove_mutiple' is not defined"",)",10
+"<class 'UnboundLocalError'>(""local variable 'sort' referenced before assignment"",)",10
+"<class 'TypeError'>(""'bool' object is not iterable"",)",10
+"<class 'UnboundLocalError'>(""local variable 'm' referenced before assignment"",)",10
+"<class 'TypeError'>(""unsupported operand type(s) for +: 'int' and 'NoneType'"",)",10
+"<class 'NameError'>(""name 'sort_list' is not defined"",)",10
+"<class 'TypeError'>('cannot unpack non-iterable int object',)",9
+"<class 'ValueError'>('not enough values to unpack (expected at least 1, got 0)',)",9
+"<class 'UnboundLocalError'>(""local variable 'newseq' referenced before assignment"",)",9
+"<class 'NameError'>(""name 'eq' is not defined"",)",9
+"<class 'UnboundLocalError'>(""local variable 'pos' referenced before assignment"",)",8
+"<class 'AttributeError'>(""'tuple' object has no attribute 'copy'"",)",8
+"<class 'TypeError'>(""'tuple' object is not callable"",)",7
+"<class 'RecursionError'>('maximum recursion depth exceeded in comparison',)",7
+"<class 'NameError'>(""name 'list1' is not defined"",)",7
+"<class 'AttributeError'>(""'NoneType' object has no attribute 'append'"",)",7
+"<class 'NameError'>(""name 'old' is not defined"",)",6
+"<class 'NameError'>(""name 'smallsest' is not defined"",)",6
+"<class 'NameError'>(""name 'lists' is not defined"",)",6
+"<class 'NameError'>(""name 'age' is not defined"",)",6
+"<class 'NameError'>(""name 't' is not defined"",)",6
+"<class 'NameError'>(""name 'st' is not defined"",)",6
+"<class 'NameError'>(""name 'larget' is not defined"",)",6
+"<class 'NameError'>(""name 'seq' is not defined"",)",6
+"<class 'TypeError'>('There are no type variables left in list[0]',)",6
+"<class 'UnboundLocalError'>(""local variable 'largest_tup' referenced before assignment"",)",6
+"<class 'TypeError'>('Object of type generator is not JSON serializable',)",6
+"<class 'NameError'>(""name 'sorted_lst' is not defined"",)",6
+"<class 'NameError'>(""name 'neW_lst' is not defined"",)",6
+"<class 'UnboundLocalError'>(""local variable 'new_list' referenced before assignment"",)",6
+"<class 'TypeError'>(""unsupported operand type(s) for -: 'list' and 'int'"",)",6
+"<class 'NameError'>(""name 'sumx' is not defined"",)",6
+"<class 'NameError'>(""name 'output' is not defined"",)",6
+"<class 'TypeError'>(""'>' not supported between instances of 'tuple' and 'int'"",)",6
+"<class 'NameError'>(""name 'smallest' is not defined"",)",6
+"<class 'NameError'>(""name 'index' is not defined"",)",6
+"<class 'UnboundLocalError'>(""local variable 'occurences' referenced before assignment"",)",5
+"<class 'TypeError'>('can only concatenate list (not ""NoneType"") to list',)",5
+"<class 'NameError'>(""name 'ls' is not defined"",)",5
+"<class 'TypeError'>(""unsupported operand type(s) for +: 'int' and 'list'"",)",5
+"<class 'NameError'>(""name 'count' is not defined"",)",5
+"<class 'TypeError'>(""unsupported operand type(s) for +=: 'int' and 'list'"",)",5
+"<class 'NameError'>(""name 'oldest' is not defined"",)",5
+"<class 'NameError'>(""name 'remove' is not defined"",)",5
+"<class 'UnboundLocalError'>(""local variable 'j' referenced before assignment"",)",5
+"<class 'AttributeError'>(""'builtin_function_or_method' object has no attribute 'item'"",)",5
+"<class 'NameError'>(""name 'seen' is not defined"",)",5
+"<class 'IndexError'>('pop from empty list',)",4
+"<class 'UnboundLocalError'>(""local variable 'lst2' referenced before assignment"",)",4
+"<class 'NameError'>(""name 'sort_lst' is not defined"",)",4
+"<class 'TypeError'>(""object of type 'NoneType' has no len()"",)",3
+"<class 'UnboundLocalError'>(""local variable 'a' referenced before assignment"",)",3
+"<class 'UnboundLocalError'>(""local variable 'res' referenced before assignment"",)",2
+"<class 'UnboundLocalError'>(""local variable 'no' referenced before assignment"",)",2
+"<class 'UnboundLocalError'>(""local variable 'counter' referenced before assignment"",)",2
+"<class 'AttributeError'>(""'builtin_function_or_method' object has no attribute 'reverse'"",)",2
+"<class 'UnboundLocalError'>(""local variable 'x' referenced before assignment"",)",1
+"<class 'NameError'>(""name 'r' is not defined"",)",1
+"<class 'ValueError'>('tuple.index(x): x not in tuple',)",1
+"<class 'TypeError'>(""int() argument must be a string, a bytes-like object or a number, not 'list'"",)",1
+"<class 'TypeError'>(""unsupported operand type(s) for +=: 'NoneType' and 'list'"",)",1
+"<class 'ValueError'>('100 is not in list',)",1
+"<class 'NameError'>(""name 'helper' is not defined"",)",1
+"<class 'UnboundLocalError'>(""local variable 'c' referenced before assignment"",)",1

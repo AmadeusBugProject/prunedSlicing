@@ -1,0 +1,38 @@
+{
+  "testFile": "function_simple.py",
+  "functionName": "simple_function",
+  "testData": [
+    {
+      "input": [],
+      "sliceVariable": "d",
+      "sliceLine": 5,
+      "dynamicSlice": [1,2,3,5],
+      "relevantSlice": [1,2,3,5],
+      "prunedSlice": [1,2,3,5]
+    },
+    {
+      "input": [],
+      "sliceVariable": "e",
+      "sliceLine": 6,
+      "dynamicSlice": [1,2,3,4,5,6],
+      "relevantSlice": [1,2,3,4,5,6],
+      "prunedSlice": [1,2,3,4,5,6]
+    },
+    {
+      "input": [],
+      "sliceVariable": "f",
+      "sliceLine": 7,
+      "dynamicSlice": [1,2,3,5,7],
+      "relevantSlice": [1,2,3,5,7],
+      "prunedSlice": [1,2,3,5,7]
+    },
+    {
+      "input": [],
+      "sliceVariable": "f",
+      "sliceLine": 8,
+      "dynamicSlice": [1,8],
+      "relevantSlice": [1,8],
+      "prunedSlice": [1,8]
+    }
+  ]
+ }

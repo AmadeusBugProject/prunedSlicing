@@ -1,0 +1,46 @@
+{
+  "testFile": "function_param.py",
+  "functionName": "function_with_param",
+  "testData": [
+    {
+      "input": [1, 1, 1],
+      "sliceVariable": "d",
+      "sliceLine": 3,
+      "dynamicSlice": [1,2,3],
+      "relevantSlice": [1,2,3],
+      "prunedSlice": [1,2,3]
+    },
+    {
+      "input": [1, 1, 1],
+      "sliceVariable": "e",
+      "sliceLine": 4,
+      "dynamicSlice": [1,2,3,4],
+      "relevantSlice": [1,2,3,4],
+      "prunedSlice": [1,2,3,4]
+    },
+    {
+      "input": [1, 1, 1],
+      "sliceVariable": "f",
+      "sliceLine": 5,
+      "dynamicSlice": [1,2,3,5],
+      "relevantSlice": [1,2,3,5],
+      "prunedSlice": [1,2,3,5]
+    },
+    {
+      "input": [1, 1, 1],
+      "sliceVariable": "f",
+      "sliceLine": 6,
+      "dynamicSlice": [1,6],
+      "relevantSlice": [1,6],
+      "prunedSlice": [1,6]
+    },
+    {
+      "input": [1, 1, 1],
+      "sliceVariable": "d",
+      "sliceLine": 9,
+      "dynamicSlice": [1,2,7,8,9],
+      "relevantSlice": [1,2,7,8,9],
+      "prunedSlice": [1,2,7,8,9]
+    }
+    ]
+ }
