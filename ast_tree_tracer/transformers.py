@@ -3,12 +3,14 @@ import ast
 from ast_tree_tracer.transformer_utils import get_name, get_names_for_data_dep, create_call, \
     recurse_visit, get_name_from_list_of_trees, unparse_for_arg, create_code_block, get_lineno_range, \
     get_names_for_boolop_dyn_slice, unparser_removing_additional_call_wrappers, get_sub_scripted_names, \
-    check_for_unsupported_constructs, get_assignmnet_targets_from_list_of_trees, get_name_excluding_sub_scripted_for_assignment_target
+    check_for_unsupported_constructs, get_assignmnet_targets_from_list_of_trees, \
+    get_name_excluding_sub_scripted_for_assignment_target, get_names_for_potential_dep, remove_duplicates
 
 
 def transform_tree(syntax_tree):
     check_for_unsupported_constructs(syntax_tree)
     syntax_tree = overload_calls(syntax_tree) # adds calls around calls, has to be called first to not wrap our own calls
+    syntax_tree = overload_create_orelse_branches_in_for_and_while(syntax_tree) # adds orelse branches to all fors and whiles
     syntax_tree = overload_flow_control_and_assigns_and_operators(syntax_tree) # adds calls
     syntax_tree = overload_pass_continue_break(syntax_tree) # adds if statements, has to be called after overload_if
     return syntax_tree
@@ -55,15 +57,20 @@ def overload_flow_control_and_assigns_and_operators(syntax_tree):
 
         def visit_If(self, node):
             data_dep = get_names_for_data_dep(node.test)
+            pot_dep_if = get_names_for_potential_dep(node.body)
+            pot_dep_orelse = get_names_for_potential_dep(node.orelse)
+
+            pot_dep = ast.List(elts=pot_dep_if.elts + pot_dep_orelse.elts, ctx=ast.Load())
+            pot_dep = remove_duplicates(pot_dep)
 
             target_args = [ast.Num(node.lineno), unparse_for_arg(node.test), data_dep, self.visit(node.test)]
-            node.test = create_call('p_condition', target_args)
+            node.test = create_call('p_condition', target_args + [pot_dep])
 
             args = [ast.Num(node.lineno), unparse_for_arg(node.test), data_dep]
-            if_begin = ast.Expr(create_call('p_if_label', args + [ast.Str('p_if_begin')]))
-            if_end = ast.Expr(create_call('p_if_label', args + [ast.Str('p_if_end')]))
-            else_begin = ast.Expr(create_call('p_if_label', args + [ast.Str('p_else_begin')]))
-            else_end = ast.Expr(create_call('p_if_label', args + [ast.Str('p_else_end')]))
+            if_begin = ast.Expr(create_call('p_if_label', args + [pot_dep, ast.Str('p_if_begin')]))
+            if_end = ast.Expr(create_call('p_if_label', args + [pot_dep, ast.Str('p_if_end')]))
+            else_begin = ast.Expr(create_call('p_if_label', args + [pot_dep, ast.Str('p_else_begin')]))
+            else_end = ast.Expr(create_call('p_if_label', args + [pot_dep, ast.Str('p_else_end')]))
 
             node.body = recurse_visit(node.body, self.visit)
             node.orelse = recurse_visit(node.orelse, self.visit)
@@ -97,14 +104,22 @@ def overload_flow_control_and_assigns_and_operators(syntax_tree):
 
         def visit_For(self, node):
             data_dep = ast.List(elts=get_name(node.iter), ctx=ast.Load())
+
+            pot_dep_for = get_names_for_potential_dep(node.body)
+            pot_dep = pot_dep_for
+            if node.orelse:
+                pot_dep_else = get_names_for_potential_dep(node.orelse)
+                pot_dep = ast.List(elts=pot_dep_for.elts + pot_dep_else.elts, ctx=ast.Load())
+            pot_dep = remove_duplicates(pot_dep)
+
             data_target = ast.List(elts=get_name(node.target), ctx=ast.Load())
             args = [ast.Num(node.lineno), unparse_for_arg(node.target), unparse_for_arg(node.iter), data_dep, data_target]
-            for_begin = ast.Expr(create_call('p_for_label', args + [ast.Str('p_for_begin')]))
-            for_end = ast.Expr(create_call('p_for_label', args + [ast.Str('p_for_end')]))
+            for_begin = ast.Expr(create_call('p_for_label', args + [pot_dep] + [ast.Str('p_for_begin')]))
+            for_end = ast.Expr(create_call('p_for_label', args + [pot_dep] + [ast.Str('p_for_end')]))
 
             if node.orelse:
-                else_begin = ast.Expr(create_call('p_for_label', args + [ast.Str('p_for_else_begin')]))
-                else_end = ast.Expr(create_call('p_for_label', args + [ast.Str('p_for_else_end')]))
+                else_begin = ast.Expr(create_call('p_for_label', args + [pot_dep] + [ast.Str('p_for_else_begin')]))
+                else_end = ast.Expr(create_call('p_for_label', args + [pot_dep] + [ast.Str('p_for_else_end')]))
                 node.orelse = recurse_visit(node.orelse, self.visit)
                 node.orelse.insert(0, else_begin)
                 node.orelse.append(else_end)
@@ -114,13 +129,23 @@ def overload_flow_control_and_assigns_and_operators(syntax_tree):
             node.target = self.visit(node.target)
             node.body.insert(0, for_begin)
             node.body.append(for_end)
-            return node
+
+            target_args = [ast.Num(node.lineno), ast.Str('ForIter'), data_dep, ast.Str('ForIter')]
+            return create_code_block(ast.Expr(create_call('p_condition', target_args + [pot_dep])), node)
 
         def visit_While(self, node):
             data_dep = get_names_for_data_dep(node.test)
+
+            pot_dep_for = get_names_for_potential_dep(node.body)
+            pot_dep = pot_dep_for
+            if node.orelse:
+                pot_dep_else = get_names_for_potential_dep(node.orelse)
+                pot_dep = ast.List(elts=pot_dep_for.elts + pot_dep_else.elts, ctx=ast.Load())
+            pot_dep = remove_duplicates(pot_dep)
+
             target_args = [ast.Num(node.lineno), unparse_for_arg(node.test), data_dep, self.visit(node.test)]
-            node.test = create_call('p_condition', target_args)
-            args = [ast.Num(node.lineno), unparse_for_arg(node.test), data_dep]
+            node.test = create_call('p_condition', target_args + [pot_dep])
+            args = [ast.Num(node.lineno), unparse_for_arg(node.test), data_dep, pot_dep]
             while_begin = ast.Expr(create_call('p_while_label', args + [ast.Str('p_while_begin')]))
             while_end = ast.Expr(create_call('p_while_label', args + [ast.Str('p_while_end')]))
 
@@ -207,3 +232,20 @@ def overload_pass_continue_break(syntax_tree):
 
     return syntax_tree
 
+
+def overload_create_orelse_branches_in_for_and_while(syntax_tree):
+    class Transformer(ast.NodeTransformer):
+        def visit_While(self, node):
+            if not node.orelse:
+                node.orelse = [ast.Pass()]
+            return node
+
+        def visit_For(self, node):
+            if not node.orelse:
+                node.orelse = [ast.Pass()]
+            return node
+
+    syntax_tree = Transformer().visit(syntax_tree)
+    syntax_tree = ast.fix_missing_locations(syntax_tree)
+
+    return syntax_tree

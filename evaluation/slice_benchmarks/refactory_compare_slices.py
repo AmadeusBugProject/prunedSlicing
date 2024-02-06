@@ -13,7 +13,8 @@ from evaluation.boolop_counter.count_boolops import file_boolops_stats
 from evaluation.slice_benchmarks.utils import remove_comments_and_top_level_const_expression_strings
 from helpers.Logger import Logger
 from slicing.code_from_slice import code_from_slice_ast
-from slicing.slice import get_dynamic_slice, get_pruned_slice, dumb_dynamic_slice
+from slicing.slice import get_dynamic_slice, get_pruned_slice, dumb_dynamic_slice, get_pruned_relevant_slice, \
+    get_relevant_slice
 from slicing.dummy import Dummy
 
 # usage inside tests
@@ -123,23 +124,24 @@ def main():
                                                        question['add_globals'])
         log.s('with ' + str(len(test_params)) + ' test params')
 
-        df = run_tests(test_params)
-        comp_df = comp_df.append(df, ignore_index=True)
+        df = run_question_tests_quix(test_params)
+        # comp_df = comp_df.append(df, ignore_index=True)
+        comp_df = pandas.concat([comp_df, df], ignore_index=True)
 
     comp_df.to_csv('../data/refactory_slicing_comparison.csv.zip', compression='zip')
     log.s('done')
 
 
-def run_tests(test_params):
+def run_question_tests_quix(test_params):
     comparison = []
     for test_param in test_params:
-        test_results = test_refactory(test_param[0].replace(benchmark_dir(), 'benchmark'), test_param[1], test_param[2], test_param[3], test_param[4], test_param[5])
+        test_results = slice_test_refactory(test_param[0].replace(benchmark_dir(), 'benchmark'), test_param[1], test_param[2], test_param[3], test_param[4], test_param[5])
         test_results.update(test_param[6])
         comparison.append(test_results)
     return pandas.DataFrame(comparison)
 
 
-def test_refactory(test_name, io_py_code, expected, slice_variable, slice_line, add_globals):
+def slice_test_refactory(test_name, io_py_code, expected, slice_variable, slice_line, add_globals):
     stage = 'started'
 
     stats_result = {'test_name': test_name,
@@ -147,40 +149,57 @@ def test_refactory(test_name, io_py_code, expected, slice_variable, slice_line, 
                     'dumb_dyn_slice': None,
                     'dyn_slice': None,
                     'pruned_slice': None,
+                    'relevant_slice': None,
+                    'pruned_relevant_slice': None,
                     'dumb_dyn_slice_len': None,
                     'pruned_slice_len': None,
                     'dyn_slice_len': None,
+                    'relevant_slice_len': None,
+                    'pruned_relevant_slice_len': None,
                     'runtime_bare_test': None,
                     'runtime_tracing_augmented_test': None,
                     'runtime_dyn_slice': None,
                     'runtime_pruned_slice': None,
+                    'runtime_relevant_slice': None,
+                    'runtime_pruned_relevant_slice': None,
                     'perf_runtime_bare_test': None,
                     'perf_runtime_tracing_augmented_test': None,
                     'perf_runtime_dyn_slice': None,
                     'perf_runtime_pruned_slice': None,
+                    'perf_runtime_relevant_slice': None,
+                    'perf_runtime_pruned_relevant_slice': None,
                     'len_exec_trace': None,
                     'test_result': None,
-                    'sliced_result_equal_to_bare': None,
+                    'pruned_sliced_result_equal_to_bare': None,
+                    'relevant_sliced_result_equal_to_bare': None,
+                    'pruned_relevant_sliced_result_equal_to_bare': None,
                     'exception': None,
                     'stage': stage,
                     'num_boolops_pruned_sliced': None,
                     'num_lines_with_boolops_pruned_sliced': None,
                     'num_boolops_dyn_sliced': None,
-                    'num_lines_with_boolops_dyn_sliced': None}
+                    'num_lines_with_boolops_dyn_sliced': None,
+                    'num_boolops_relevant_sliced': None,
+                    'num_lines_with_boolops_relevant_sliced': None,
+                    'num_boolops_pruned_relevant_sliced': None,
+                    'num_lines_with_boolops_pruned_relevant_sliced': None,
+                    }
     try:
         # run test as is and record result
         stage = 'bare execution'
 
         perf_start = time.perf_counter()
         bare_outcome = run_come_code(io_py_code, slice_variable, add_globals)
-        perf_runtime_bare_test = time.perf_counter() - perf_start
-        test_result = bare_outcome == expected
+        stats_result['perf_runtime_bare_test'] = time.perf_counter() - perf_start
+        stats_result['test_result'] = bare_outcome == expected
 
-        runtime_bare_test = -1
+        stats_result['code_len'] = len(io_py_code.splitlines())
+
+        stats_result['runtime_bare_test'] = -1
         if NUM_RUNS_TIMEIT:
             globals_copy = globals().copy()
             globals_copy.update(add_globals)
-            runtime_bare_test = timeit.timeit(stmt=io_py_code, number=NUM_RUNS_TIMEIT, globals=globals_copy)/NUM_RUNS_TIMEIT
+            stats_result['runtime_bare_test'] = timeit.timeit(stmt=io_py_code, number=NUM_RUNS_TIMEIT, globals=globals_copy)/NUM_RUNS_TIMEIT
 
         # trace
         stage = 'trace'
@@ -189,11 +208,12 @@ def test_refactory(test_name, io_py_code, expected, slice_variable, slice_line, 
 
         perf_start = time.perf_counter()
         trace.run_trace(io_augmented_code, add_globals)
-        perf_runtime_tracing_augmented_test = time.perf_counter() - perf_start
+        stats_result['perf_runtime_tracing_augmented_test'] = time.perf_counter() - perf_start
         exec_trace = get_trace().copy()
+        stats_result['len_exec_trace'] = len(exec_trace)
         clear_trace()
 
-        runtime_tracing_augmented_test = -1
+        stats_result['runtime_tracing_augmented_test'] = -1
         if NUM_RUNS_TIMEIT:
             tracing_call = """
 trace.run_trace(io_augmented_code, add_globals)
@@ -201,85 +221,149 @@ clear_trace()"""
             globals_copy = globals().copy()
             globals_copy.update({'io_augmented_code': io_augmented_code})
             globals_copy.update({'add_globals': add_globals})
-            runtime_tracing_augmented_test = timeit.timeit(stmt=tracing_call, number=NUM_RUNS_TIMEIT,
+            stats_result['runtime_tracing_augmented_test'] = timeit.timeit(stmt=tracing_call, number=NUM_RUNS_TIMEIT,
                                                            globals=globals_copy) / NUM_RUNS_TIMEIT
 
         # dumb slicing
-        stage = 'dumb slicing'
+        try:
+            stage = 'dumb slicing'
+            dumb_dyn_slice = dumb_dynamic_slice(exec_trace)
+            stats_result['dumb_dyn_slice'] = dumb_dyn_slice,
+            stats_result['dumb_dyn_slice_len'] = len(dumb_dyn_slice)
 
-        dumb_dyn_slice = dumb_dynamic_slice(exec_trace)
+        except Exception as e:
+            stats_result['dumb_dyn_slice_exception'] = str(type(e)) + str(e.args)
+            stats_result['stage'] = stage
 
         # dyn slice
-        stage = 'dyn slice'
+        try:
+            stage = 'dyn slice'
 
-        runtime_dyn_slice = -1
-        if NUM_RUNS_TIMEIT:
-            globals_copy = globals().copy()
-            globals_copy.update({'exec_trace': exec_trace, 'slice_variable': slice_variable, 'slice_line': slice_line})
-            runtime_dyn_slice = timeit.timeit(stmt='get_dynamic_slice(exec_trace, slice_variable, slice_line)', number=NUM_RUNS_TIMEIT, globals=globals_copy)/NUM_RUNS_TIMEIT
+            stats_result['runtime_dyn_slice'] = -1
+            if NUM_RUNS_TIMEIT:
+                globals_copy = globals().copy()
+                globals_copy.update({'exec_trace': exec_trace, 'slice_variable': slice_variable, 'slice_line': slice_line})
+                stats_result['runtime_dyn_slice'] = timeit.timeit(stmt='get_dynamic_slice(exec_trace, slice_variable, slice_line)', number=NUM_RUNS_TIMEIT, globals=globals_copy)/NUM_RUNS_TIMEIT
 
-        perf_start = time.perf_counter()
-        dyn_slice, dyn_bool_ops, func_param_removal = get_dynamic_slice(exec_trace, slice_variable, slice_line)
-        perf_runtime_dyn_slice = time.perf_counter() - perf_start
+            perf_start = time.perf_counter()
+            dyn_slice, dyn_bool_ops, func_param_removal = get_dynamic_slice(exec_trace, slice_variable, slice_line)
+            stats_result['perf_runtime_dyn_slice'] = time.perf_counter() - perf_start
+            stats_result['dyn_slice'] = dyn_slice
+            stats_result['dyn_slice_len'] = len(dyn_slice)
 
-        # dyn code from slice
-        stage = 'dyn code from slice'
+            # dyn code from slice
+            stage = 'dyn code from slice'
 
-        dyn_sliced_code = code_from_slice_ast(io_py_code, dyn_slice, dyn_bool_ops, exec_trace, func_param_removal)
-        dyn_sliced_boolops_stats = file_boolops_stats(dyn_sliced_code)
+            dyn_sliced_code = code_from_slice_ast(io_py_code, dyn_slice, dyn_bool_ops, exec_trace, func_param_removal)
+            dyn_sliced_boolops_stats = file_boolops_stats(dyn_sliced_code)
+            stats_result['num_boolops_dyn_sliced'] = dyn_sliced_boolops_stats['num_boolops']
+            stats_result['num_lines_with_boolops_dyn_sliced'] = dyn_sliced_boolops_stats['num_lines_with_boolops']
+        except Exception as e:
+            stats_result['dyn_slice_exception'] = str(type(e)) + str(e.args)
+            stats_result['stage'] = stage
 
         # pruned slice
-        stage = 'pruned slice'
+        try:
+            stage = 'pruned slice'
 
-        runtime_pruned_slice = -1
-        if NUM_RUNS_TIMEIT:
-            globals_copy = globals().copy()
-            globals_copy.update({'exec_trace': exec_trace, 'slice_variable': slice_variable, 'slice_line': slice_line})
-            runtime_pruned_slice = timeit.timeit(stmt='get_pruned_slice(exec_trace, slice_variable, slice_line)', number=NUM_RUNS_TIMEIT, globals=globals_copy)/NUM_RUNS_TIMEIT
+            stats_result['runtime_pruned_slice'] = -1
+            if NUM_RUNS_TIMEIT:
+                globals_copy = globals().copy()
+                globals_copy.update({'exec_trace': exec_trace, 'slice_variable': slice_variable, 'slice_line': slice_line})
+                stats_result['runtime_pruned_slice'] = timeit.timeit(stmt='get_pruned_slice(exec_trace, slice_variable, slice_line)', number=NUM_RUNS_TIMEIT, globals=globals_copy)/NUM_RUNS_TIMEIT
 
-        perf_start = time.perf_counter()
-        pruned_slice, cond_bool_ops, func_param_removal = get_pruned_slice(exec_trace, slice_variable, slice_line)
-        perf_runtime_pruned_slice = time.perf_counter() - perf_start
+            perf_start = time.perf_counter()
+            pruned_slice, cond_bool_ops, func_param_removal = get_pruned_slice(exec_trace, slice_variable, slice_line)
+            stats_result['perf_runtime_pruned_slice'] = time.perf_counter() - perf_start
+            stats_result['pruned_slice'] = pruned_slice
+            stats_result['pruned_slice_len'] = len(pruned_slice)
 
-        # code from slice
-        stage = 'code from slice'
+            # code from slice
+            stage = 'code from slice'
 
-        sliced_code = code_from_slice_ast(io_py_code, pruned_slice, cond_bool_ops, exec_trace, func_param_removal)
-        pruned_sliced_boolops_stats = file_boolops_stats(sliced_code)
+            sliced_code = code_from_slice_ast(io_py_code, pruned_slice, cond_bool_ops, exec_trace, func_param_removal)
+            pruned_sliced_boolops_stats = file_boolops_stats(sliced_code)
+            stats_result['num_boolops_pruned_sliced'] = pruned_sliced_boolops_stats['num_boolops']
+            stats_result['num_lines_with_boolops_pruned_sliced'] = pruned_sliced_boolops_stats['num_lines_with_boolops']
 
-        # run sliced
-        stage = 'run sliced'
+            # run sliced
+            stage = 'run pruned sliced'
+            sliced_outcome = run_come_code(sliced_code, slice_variable, add_globals)
+            stats_result['pruned_sliced_result_equal_to_bare'] = bare_outcome == sliced_outcome
+        except Exception as e:
+            stats_result['pruned_slice_exception'] = str(type(e)) + str(e.args)
+            stats_result['stage'] = stage
 
-        sliced_outcome = run_come_code(sliced_code, slice_variable, add_globals)
-        sliced_equal_to_bare = sliced_outcome == bare_outcome
-        exception = None
-        stage = 'finished'
+        # relevant slice
+        try:
+            stage = 'relevant slice'
 
-        stats_result = {'test_name': test_name,
-                        'code_len': len(io_py_code.splitlines()),
-                        'dumb_dyn_slice': dumb_dyn_slice,
-                        'dyn_slice': dyn_slice,
-                        'pruned_slice': pruned_slice,
-                        'dumb_dyn_slice_len': len(dumb_dyn_slice),
-                        'pruned_slice_len': len(pruned_slice),
-                        'dyn_slice_len': len(dyn_slice),
-                        'runtime_bare_test': runtime_bare_test,
-                        'runtime_tracing_augmented_test': runtime_tracing_augmented_test,
-                        'runtime_dyn_slice': runtime_dyn_slice,
-                        'runtime_pruned_slice': runtime_pruned_slice,
-                        'perf_runtime_bare_test': perf_runtime_bare_test,
-                        'perf_runtime_tracing_augmented_test': perf_runtime_tracing_augmented_test,
-                        'perf_runtime_dyn_slice': perf_runtime_dyn_slice,
-                        'perf_runtime_pruned_slice': perf_runtime_pruned_slice,
-                        'len_exec_trace': len(exec_trace),
-                        'test_result': test_result,
-                        'sliced_result_equal_to_bare': sliced_equal_to_bare,
-                        'exception': exception,
-                        'stage': stage,
-                        'num_boolops_pruned_sliced': pruned_sliced_boolops_stats['num_boolops'],
-                        'num_lines_with_boolops_pruned_sliced': pruned_sliced_boolops_stats['num_lines_with_boolops'],
-                        'num_boolops_dyn_sliced': dyn_sliced_boolops_stats['num_boolops'],
-                        'num_lines_with_boolops_dyn_sliced': dyn_sliced_boolops_stats['num_lines_with_boolops']}
+            stats_result['runtime_relevant_slice'] = -1
+            if NUM_RUNS_TIMEIT:
+                globals_copy = globals().copy()
+                globals_copy.update({'exec_trace': exec_trace, 'slice_variable': slice_variable, 'slice_line': slice_line})
+                stats_result['runtime_relevant_slice'] = timeit.timeit(stmt='get_relevant_slice(exec_trace, slice_variable, slice_line)', number=NUM_RUNS_TIMEIT, globals=globals_copy)/NUM_RUNS_TIMEIT
+
+            perf_start = time.perf_counter()
+            relevant_slice, cond_bool_ops, func_param_removal = get_relevant_slice(exec_trace, slice_variable, slice_line)
+            stats_result['perf_runtime_relevant_slice'] = time.perf_counter() - perf_start
+            stats_result['relevant_slice'] = relevant_slice
+            stats_result['relevant_slice_len'] = len(relevant_slice)
+
+            # code from slice
+            stage = 'code from relevant slice'
+
+            sliced_code = code_from_slice_ast(io_py_code, relevant_slice, cond_bool_ops, exec_trace, func_param_removal)
+            relevant_sliced_boolops_stats = file_boolops_stats(sliced_code)
+            stats_result['num_boolops_relevant_sliced'] = relevant_sliced_boolops_stats['num_boolops']
+            stats_result['num_lines_with_boolops_relevant_sliced'] = relevant_sliced_boolops_stats['num_lines_with_boolops']
+
+            # run sliced
+            stage = 'run relevant sliced'
+
+            sliced_outcome = run_come_code(sliced_code, slice_variable, add_globals)
+            stats_result['relevant_sliced_result_equal_to_bare'] = sliced_outcome == bare_outcome
+        except Exception as e:
+            stats_result['relevant_slice_exception'] = str(type(e)) + str(e.args)
+            stats_result['stage'] = stage
+
+        # pruned relevant slice
+        try:
+            stage = 'pruned relevant slice'
+
+            stats_result['runtime_pruned_relevant_slice'] = -1
+            if NUM_RUNS_TIMEIT:
+                globals_copy = globals().copy()
+                globals_copy.update({'exec_trace': exec_trace, 'slice_variable': slice_variable, 'slice_line': slice_line})
+                stats_result['runtime_pruned_relevant_slice'] = timeit.timeit(stmt='get_pruned_relevant_slice(exec_trace, slice_variable, slice_line)',
+                                                       number=NUM_RUNS_TIMEIT, globals=globals_copy) / NUM_RUNS_TIMEIT
+
+            perf_start = time.perf_counter()
+            pruned_relevant_slice, cond_bool_ops, func_param_removal = get_pruned_relevant_slice(exec_trace, slice_variable, slice_line)
+            stats_result['perf_runtime_pruned_relevant_slice'] = time.perf_counter() - perf_start
+            stats_result['pruned_relevant_slice'] = pruned_relevant_slice
+            stats_result['pruned_relevant_slice_len'] = len(pruned_relevant_slice)
+
+            # code from slice
+            stage = 'code from pruned relevant slice'
+
+            sliced_code = code_from_slice_ast(io_py_code, pruned_relevant_slice, cond_bool_ops, exec_trace, func_param_removal)
+            pruned_relevant_sliced_boolops_stats = file_boolops_stats(sliced_code)
+
+            stats_result['num_boolops_pruned_relevant_sliced'] = pruned_relevant_sliced_boolops_stats['num_boolops']
+            stats_result['num_lines_with_boolops_pruned_relevant_sliced'] = pruned_relevant_sliced_boolops_stats[
+                'num_lines_with_boolops']
+
+            # run sliced
+            stage = 'run pruned relevant sliced'
+
+            sliced_outcome = run_come_code(sliced_code, slice_variable, add_globals)
+            stats_result['pruned_relevant_sliced_result_equal_to_bare'] = sliced_outcome == bare_outcome
+        except Exception as e:
+            stats_result['pruned_relevant_slice_exception'] = str(type(e)) + str(e.args)
+            stats_result['stage'] = stage
+
+        stats_result['stage'] = 'finished'
 
     except Exception as e:
         stats_result['exception'] = str(type(e)) + str(e.args)

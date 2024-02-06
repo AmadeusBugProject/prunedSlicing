@@ -8,7 +8,7 @@ from parameterized import parameterized
 from ast_tree_tracer import trace
 from ast_tree_tracer.trace_container import get_trace, clear_trace
 from helpers.Logger import Logger
-from slicing.slice import get_dynamic_slice, get_pruned_slice
+from slicing.slice import get_dynamic_slice, get_pruned_slice, get_relevant_slice
 from test.run_in_test import relative_to_project_root
 
 log = Logger()
@@ -64,7 +64,7 @@ class TestDynamicSlices(unittest.TestCase):
         clear_trace()
 
     @parameterized.expand(get_test_parameters())
-    def test_dynamic_slicing(self, test_id, file_name, function, python_code, input, variable, line, dyn_slice, rel_slice, pruned_slice):
+    def test_dynamic_slicing(self, test_id, file_name, function, python_code, input, variable, line, expected_dyn_slice, rel_slice, pruned_slice):
         trace.trace_python(python_code)
         exec_trace = get_trace()
         log.pretty_print_slice_criteria(line, variable)
@@ -72,9 +72,9 @@ class TestDynamicSlices(unittest.TestCase):
         log.print_trace(exec_trace)
         computed_slice, rel_bool_ops, _ = get_dynamic_slice(exec_trace, variable, line)
 
-        print(dyn_slice)
+        print(expected_dyn_slice)
         print(computed_slice)
-        self.assertEqual(set(dyn_slice), computed_slice)
+        self.assertEqual(set(expected_dyn_slice), computed_slice)
 
 
 class TestRelevantSlices(unittest.TestCase):
@@ -82,7 +82,25 @@ class TestRelevantSlices(unittest.TestCase):
         clear_trace()
 
     @parameterized.expand(get_test_parameters())
-    def test_relevant_slicing(self, test_id, file_name, function, python_code, input, variable, line, dyn_slice, rel_slice, pruned_slice):
+    def test_relevant_slicing(self, test_id, file_name, function, python_code, input, variable, line, dyn_slice, expected_rel_slice, pruned_slice):
+        trace.trace_python(python_code)
+        exec_trace = get_trace()
+        log.pretty_print_slice_criteria(line, variable)
+        log.pretty_print_code(python_code)
+        log.print_trace(exec_trace)
+        computed_slice, rel_bool_ops, _ = get_relevant_slice(exec_trace, variable, line)
+
+        print(expected_rel_slice)
+        print(computed_slice)
+        self.assertEqual(set(expected_rel_slice), computed_slice)
+
+
+class TestPrunedSlices(unittest.TestCase):
+    def tearDown(self):
+        clear_trace()
+
+    @parameterized.expand(get_test_parameters())
+    def test_pruned_slicing(self, test_id, file_name, function, python_code, input, variable, line, dyn_slice, rel_slice, expected_pruned_slice):
         trace.trace_python(python_code)
         exec_trace = get_trace()
         log.pretty_print_slice_criteria(line, variable)
@@ -90,6 +108,6 @@ class TestRelevantSlices(unittest.TestCase):
         log.print_trace(exec_trace)
         computed_slice, rel_bool_ops, _ = get_pruned_slice(exec_trace, variable, line)
 
-        print(pruned_slice)
+        print(expected_pruned_slice)
         print(computed_slice)
-        self.assertEqual(set(computed_slice), computed_slice)
+        self.assertEqual(set(expected_pruned_slice), computed_slice)

@@ -1,3 +1,5 @@
+import pathlib
+
 QUIX_TIMEOUT = 10
 REFACTORY_TIMEOUT = 0.1
 
@@ -14,5 +16,8 @@ CODE_GEN_TIMEOUT = 1
 
 # AMD® Ryzen™ 7 Pro 3700U Processor (2.30 GHz, up to 4.00 GHz Max Boost, 4 Cores, 8 Threads, 4 MB Cache)
 # 16 GB ram
-# Manjaro Linux 21.0.2
+# Debain 11
 # Python 3.9
+
+def root_dir():
+    return str(pathlib.Path(__file__).parent) + '/'

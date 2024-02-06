@@ -1,6 +1,0 @@
-          num_lines_with_boolops_dyn_sliced                                              num_lines_with_boolops_pruned_sliced
-                                      count      mean       std  min  25%  50%  75%  max                              count      mean       std  min  25%  50%  75%  max
-benchmark                                                                                                                                                               
-quixbugs                              740.0  0.237838  0.517803  0.0  0.0  0.0  0.0  2.0                              740.0  0.237838  0.517803  0.0  0.0  0.0  0.0  2.0
-refactory                           41169.0  0.078700  0.299509  0.0  0.0  0.0  0.0  3.0                            41169.0  0.067332  0.276411  0.0  0.0  0.0  0.0  3.0
-tcas                               117420.0  2.947232  2.214548  0.0  1.0  3.0  5.0  8.0                           117420.0  1.837711  1.591168  0.0  0.0  2.0  3.0  7.0

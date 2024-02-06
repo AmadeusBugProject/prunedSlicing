@@ -17,20 +17,31 @@ def dumb_dynamic_slice(exec_trace):
 
 @timeout_decorator.timeout(SLICING_TIMEOUT)
 def get_dynamic_slice(exec_trace, variable, line_number, parameters_in_slice=False):
-    slicer = Slicer(parameters_in_slice, pruned_slice=False)
+    slicer = Slicer(parameters_in_slice, pruned_slice=False, relevant_slice=False)
+    return slicer.get_slice_for(exec_trace, variable, line_number)
+
+@timeout_decorator.timeout(SLICING_TIMEOUT)
+def get_relevant_slice(exec_trace, variable, line_number, parameters_in_slice=False):
+    slicer = Slicer(parameters_in_slice, pruned_slice=False, relevant_slice=True)
     return slicer.get_slice_for(exec_trace, variable, line_number)
 
 
 @timeout_decorator.timeout(SLICING_TIMEOUT)
 def get_pruned_slice(exec_trace, variable, line_number, parameters_in_slice=False):
-    slicer = Slicer(parameters_in_slice, pruned_slice=True)
+    slicer = Slicer(parameters_in_slice, pruned_slice=True, relevant_slice=False)
+    return slicer.get_slice_for(exec_trace, variable, line_number)
+
+@timeout_decorator.timeout(SLICING_TIMEOUT)
+def get_pruned_relevant_slice(exec_trace, variable, line_number, parameters_in_slice=False):
+    slicer = Slicer(parameters_in_slice, pruned_slice=True, relevant_slice=True)
     return slicer.get_slice_for(exec_trace, variable, line_number)
 
 
 class Slicer:
-    def __init__(self, parameters_in_slice, pruned_slice):
+    def __init__(self, parameters_in_slice, pruned_slice, relevant_slice):
         self.parameters_in_slice = parameters_in_slice
         self.pruned_slice = pruned_slice
+        self.relevant_slice = relevant_slice
         self.slice = set()
                 
     def get_slice_for(self, exec_trace, variable, line_number):
@@ -193,7 +204,7 @@ class Slicer:
                     slice_end_index = self.add_control_statement(exec_trace, slice_end_index, slice_end_index)
     
                     if line_info.get('type') in ['p_for_begin', 'p_while_begin']:
-                        break_and_continues, loop_end_index = self.get_break_continues_loop_end_index(exec_trace, slice_end_index)
+                        break_and_continues, loop_end_index = self.get_break_continues_loop_end_index(exec_trace, slice_end_index, line_info.get('lineno'))
                         for item in break_and_continues:
                             self.slice.add(exec_trace[item].get('lineno'))
                             control_lineno = exec_trace[item].get('control_dep').split(':')[0]  #  adding if-statements that contain the condition for break/continue
@@ -208,6 +219,56 @@ class Slicer:
     
                 slice_end_index -= 1
             elif line_info.get('type') == 'p_condition':
+                # ToDo: here we have to add the relevant slicing code
+                if self.relevant_slice:
+                    if relevant_variables.intersection(line_info.get('pot_dep')):
+                        if line_info.get('lineno') in self.slice:
+                            slice_end_index -= 1
+                            continue
+                        self.slice.add(line_info.get('lineno'))
+                        relevant_variables = relevant_variables.union(line_info.get('data_dep'))
+
+                        cond_line_number = line_info.get('lineno')
+
+                        # TODO dont go to last slice_end_index in the same line, but the next 'p_for_begin', 'p_while_begin', 'p_for_else_begin', 'p_while_else_begin'
+                        # while(exec_trace[slice_end_index].get('lineno')==cond_line_number):
+                        #     slice_end_index += 1
+                        #     if slice_end_index >= len(exec_trace):
+                        #         break
+                        #     control_statement_line_info = exec_trace[slice_end_index]
+                        # slice_end_index -= 1
+
+                        original_slice_end_index = slice_end_index
+                        while (exec_trace[slice_end_index].get('type') not in ['p_for_begin', 'p_while_begin',
+                                                                               'p_for_else_begin', 'p_while_else_begin',
+                                                                               'p_else_begin', 'p_if_begin']):
+
+                            if exec_trace[slice_end_index].get('lineno') != cond_line_number:  # loop executed at least once
+                                break
+                            slice_end_index += 1
+                            if slice_end_index >= len(exec_trace):
+                                raise Exception("Exception while relevant slicing: slice_end_index >= len(exec_trace)")
+
+                        if exec_trace[slice_end_index].get('lineno') != cond_line_number:  # loop executed at least once
+                            slice_end_index = original_slice_end_index
+                        else:
+                            control_statement_line_info = exec_trace[slice_end_index]
+
+                            if control_statement_line_info.get('type') in ['p_for_begin', 'p_while_begin', 'p_for_else_begin', 'p_while_else_begin']:
+                                break_and_continues, loop_end_index = self.get_break_continues_loop_end_index(exec_trace, slice_end_index, control_statement_line_info.get('lineno'))
+                                for item in break_and_continues:
+                                    self.slice.add(exec_trace[item].get('lineno'))
+                                    control_lineno = exec_trace[item].get('control_dep').split(':')[0]  # adding if-statements that contain the condition for break/continue
+                                    highest_control_index = -1
+                                    if int(control_lineno) not in self.slice:
+                                        self.slice.add(int(control_lineno))
+                                        control_index = next((index for (index, d) in enumerate(reversed(exec_trace))
+                                                              if d["lineno"] == int(control_lineno)), None)
+                                        control_index = len(exec_trace) - 1 - int(control_index)
+                                        highest_control_index = max(highest_control_index, control_index)
+                                    slice_end_index = max(highest_control_index + 1, slice_end_index)
+
+                # End ToDo
                 slice_end_index -= 1
             elif line_info.get('type') in ['p_else_end', 'p_for_else_end', 'p_while_else_end']:
                 slice_end_index -= 1
@@ -221,7 +282,7 @@ class Slicer:
         return relevant_variables, bool_ops_slice, func_param_removal
 
     @staticmethod
-    def get_break_continues_loop_end_index(exec_trace, slice_index):
+    def get_break_continues_loop_end_index(exec_trace, slice_index, line_no):
         line_loop_begin = exec_trace[slice_index].get('lineno')
         loop_begins = 1
         loop_ends = 0
@@ -235,7 +296,7 @@ class Slicer:
                 break_and_continues.add(index)
             elif exec_trace[index].get('type') in ['p_for_begin', 'p_while_begin']:
                 loop_begins += 1
-            if exec_trace[index].get('type') in ['p_for_end', 'p_while_end', 'p_break', 'p_continue']:
+            if exec_trace[index].get('type') in ['p_for_end', 'p_while_end', 'p_break', 'p_continue'] and exec_trace[index].get('lineno') == line_no:
                 loop_end_index = index
                 loop_ends += 1
             index += 1
@@ -427,7 +488,7 @@ class Slicer:
                 self.slice.add(control_lineno)
                 # Todo: This is a quick and dirty hack which might result in an endless loop
                 if type in ['p_for_begin', 'p_while_begin']:
-                    _, loop_end_index = Slicer.get_break_continues_loop_end_index(exec_trace, function_index)
+                    _, loop_end_index = Slicer.get_break_continues_loop_end_index(exec_trace, function_index, control_lineno)
                     function_index = max(loop_end_index + 1, function_index)
         return function_index
 

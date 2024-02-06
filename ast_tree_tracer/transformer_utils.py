@@ -1,6 +1,20 @@
 import ast
+import copy
 
 from slicing.slicing_exceptions import SlicingException
+
+
+def remove_duplicates(astlist):
+    new_ids = []
+    seen_values = []
+    for elt in astlist.elts:
+        value = elt.value
+        if value in seen_values:
+            continue
+        else:
+            seen_values.append(value)
+            new_ids.append(elt)
+    return ast.List(elts=new_ids, ctx=ast.Load())
 
 
 def recurse_visit(node_list, visit):
@@ -26,6 +40,28 @@ def get_names_for_data_dep(node):
     else:
         data_dep = ast.List(elts=get_name(node), ctx=ast.Load())
     return data_dep
+
+
+def get_names_for_potential_dep(syntax_trees):
+    ids = []
+
+    class SubscriptVisitor(ast.NodeVisitor):
+        def visit_Call(self, node):
+            if 'id' in dir(node.func) and node.func.id == 'p_call_after':
+                orig_call = node.args[6]
+                if type(orig_call.func) is ast.Attribute and type(orig_call.func.value) is ast.Name:
+                    # ids.append(unparse_augmented_func(node))
+                    ids.append(ast.Str(orig_call.func.value.id))
+
+        def visit_Assign(self, node):
+            ids.extend(get_assignmnet_targets_from_list_of_trees(node.targets)[0].elts)
+
+        def visit_AugAssign(self, node):
+            ids.extend(get_name_excluding_sub_scripted_for_assignment_target(node.target))
+    for syntax_tree in syntax_trees:
+        SubscriptVisitor().visit(syntax_tree)
+
+    return remove_duplicates(ast.List(elts=ids, ctx=ast.Load()))
 
 
 def get_names_for_boolop_dyn_slice(node):

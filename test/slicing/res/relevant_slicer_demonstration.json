@@ -1,0 +1,31 @@
+{
+  "testFile": "relevant_slicer_demonstration.py",
+  "functionName": "my_func",
+  "testData": [
+    {
+      "input": [1,1],
+      "sliceVariable": "z",
+      "sliceLine": 12,
+      "dynamicSlice":  [1,2,11],
+      "relevantSlice": [1,2,4,11],
+      "prunedSlice":   [1,2,11]
+    },
+    {
+      "input": [1,0],
+      "sliceVariable": "z",
+      "sliceLine": 12,
+      "dynamicSlice":  [1,3,4,5,6,7,10,11],
+      "relevantSlice": [1,3,4,5,6,7,10,11],
+      "prunedSlice":   [1,3,4,5,6,7,10,11],
+      "comment": "our dynamic slicer handles symmetric dependencies, therefore the dynamic slice is {1,3,4,5,6,7,10,11} instead of {1,4,5,11}"
+    },
+    {
+      "input": [3,-2],
+      "sliceVariable": "z",
+      "sliceLine": 12,
+      "dynamicSlice":  [1,3,4,5,6,7,10,11],
+      "relevantSlice": [1,3,4,5,6,7,10,11],
+      "prunedSlice":   [1,3,4,5,6,7,10,11]
+    }
+  ]
+}

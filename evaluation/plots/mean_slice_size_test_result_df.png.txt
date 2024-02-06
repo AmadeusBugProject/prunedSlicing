@@ -1,8 +1,0 @@
-                       Executed statements  Dynamic Slice  Pruned Dynamic Slice
-benchmark test_result                                                          
-quixbugs  False                   8.262626       7.464646              7.464646
-          True                    8.892989       8.498155              8.498155
-refactory False                   6.909776       5.024400              5.024400
-          True                    7.410829       6.373887              6.373747
-tcas      False                  64.445792      51.405136             46.805278
-          True                   54.181493      35.821090             32.157116

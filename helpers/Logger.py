@@ -41,13 +41,13 @@ class Logger:
         for i, t in enumerate(trace):
             print('trace ' + str(i) + ' | ' + self.pretty_trace_line(t))
 
-    content_colors = {'lineno': CGREEN, 'type': CBLUE, 'info': '', 'control_dep': CVIOLET, 'data_target': CYELLOW, 'data_dep': CBLUE2, 'class_range': CYELLOW, 'func_name': CGREEN2, 'bool_op': CWHITE}
+    content_colors = {'lineno': CGREEN, 'type': CBLUE, 'info': '', 'control_dep': CVIOLET, 'data_target': CYELLOW, 'data_dep': CBLUE2, 'pot_dep': CGREEN2, 'class_range': CYELLOW, 'func_name': CGREEN2, 'bool_op': CWHITE}
 
     def pretty_trace_line(self, trace):
         if self.level == 5:
             return
         out = []
-        for key in ['lineno', 'type', 'data_target', 'data_dep', 'control_dep', 'info', 'class_range', 'func_name', 'bool_op']:
+        for key in ['lineno', 'type', 'data_target', 'data_dep', 'pot_dep', 'control_dep', 'info', 'class_range', 'func_name', 'bool_op']:
             out.append(CBOLD + CRED + key + ': ' + CEND + self.content_colors[key] + str(trace[key]) + CEND + '\t')
         return ' '.join(out)
 

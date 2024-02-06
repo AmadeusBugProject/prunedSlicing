@@ -8,7 +8,7 @@ from ast_tree_tracer.trace_container import get_trace
 from ast_tree_tracer.trace_container import clear_trace
 from constants import QUIX_TIMEOUT
 from slicing.code_from_slice import code_from_slice_ast
-from slicing.slice import get_dynamic_slice
+from slicing.slice import get_dynamic_slice, get_pruned_slice, get_relevant_slice, get_pruned_relevant_slice
 from helpers.Logger import Logger
 from slicing.dummy import Dummy
 
@@ -289,7 +289,107 @@ quix_result = lis([5, 1, 3, 4, 7])"""
 
         self.assertEqual(run_code(code_block, variable), run_code(sliced_code, variable))
 
+   # @timeout_decorator.timeout(QUIX_TIMEOUT)
+    def test_knapsack(self):
+        code_block = """
+def knapsack(capacity, items):
+    from collections import defaultdict
+    memo = defaultdict(int)
+
+    for i in range(1, len(items) + 1):
+        weight, value = items[i - 1]
+
+        for j in range(1, capacity + 1):
+            memo[i, j] = memo[i - 1, j]
+
+            if weight <= j:
+                memo[i, j] = max(memo[i, j], value + memo[i - 1, j - weight])
+
+    return memo[len(items), capacity]
+quix_result = knapsack([750, [[70, 135], [73, 139], [77, 149], [80, 150], [82, 156], [87, 163], [90, 173], [94, 184], [98, 192], [106, 201], [110, 210], [113, 214], [115, 221], [118, 229], [120, 240]]], 1458)"""
+
+        variable = 'quix_result'
+        line_number = 15
+        run_code(code_block, variable)
+        log.pretty_print_code(code_block)
+
+        augmented = trace.augment_python(code_block)
+
+        log.pretty_print_code(augmented)
+        trace.run_trace(augmented)
+        exec_trace = get_trace()
+        log.print_trace(get_trace())
+
+        computed_slice, rel_bool_ops, func_param_removal = get_dynamic_slice(exec_trace, variable, line_number)
+
+        sliced_code = code_from_slice_ast(code_block, computed_slice, rel_bool_ops, exec_trace, func_param_removal)
+        log.pretty_print_code(code_block)
+        log.pretty_print_code(sliced_code)
+
+        self.assertEqual(run_code(code_block, variable), run_code(sliced_code, variable))
 
 
+   # @timeout_decorator.timeout(QUIX_TIMEOUT)
+    def test_possible_change(self):
+        code_block = """
+def possible_change(coins, total):
+    if total == 0:
+        return 1
+    if total < 0 or not coins:
+        return 0
 
+    first, *rest = coins
+    return possible_change(coins, total - first) + possible_change(rest, total)
+quix_result = possible_change([3, 7, 42, 78], 140)"""
 
+        variable = 'quix_result'
+        line_number = 10
+        run_code(code_block, variable)
+        log.pretty_print_code(code_block)
+
+        augmented = trace.augment_python(code_block)
+
+        trace.run_trace(augmented)
+        exec_trace = get_trace()
+        log.print_trace(get_trace())
+
+        computed_slice, rel_bool_ops, func_param_removal = get_pruned_slice(exec_trace, variable, line_number)
+
+        sliced_code = code_from_slice_ast(code_block, computed_slice, rel_bool_ops, exec_trace, func_param_removal)
+
+        log.pretty_print_code(sliced_code)
+
+        self.assertEqual(run_code(code_block, variable), run_code(sliced_code, variable))
+
+    # @timeout_decorator.timeout(QUIX_TIMEOUT)
+    def test_longest_common_subsequence(self):
+        code_block = """
+def longest_common_subsequence(a, b):
+    if not a or not b:
+        return ''
+
+    elif a[0] == b[0]:
+        return a[0] + longest_common_subsequence(a[1:], b[1:])
+
+    else:
+        return max(longest_common_subsequence(a, b[1:]), longest_common_subsequence(a[1:], b), key=len)
+quix_result = longest_common_subsequence(["daenarys", "targaryen"], "aary")"""
+
+        variable = 'quix_result'
+        line_number = 11
+        run_code(code_block, variable)
+        log.pretty_print_code(code_block)
+
+        augmented = trace.augment_python(code_block)
+
+        trace.run_trace(augmented)
+        exec_trace = get_trace()
+        log.print_trace(get_trace())
+
+        computed_slice, rel_bool_ops, func_param_removal = get_dynamic_slice(exec_trace, variable, line_number)
+
+        sliced_code = code_from_slice_ast(code_block, computed_slice, rel_bool_ops, exec_trace, func_param_removal)
+
+        log.pretty_print_code(sliced_code)
+
+        self.assertEqual(run_code(code_block, variable), run_code(sliced_code, variable))

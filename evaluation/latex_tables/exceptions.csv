@@ -1,0 +1,9 @@
+,tcas_pruned_slice_status,tcas_relevant_pruned_slice_status,tcas_test_status,refactory_pruned_slice_status,refactory_relevant_pruned_slice_status,refactory_test_status,quixbugs_pruned_slice_status,quixbugs_relevant_pruned_slice_status,quixbugs_test_status
+Executed,-,-,58710,-,-,20836,-,-,374
+Not executable,-,-,-,-,-,3144,-,-,64
+Not supported,-,-,-,-,-,1161,-,-,28
+Timeout during tracing,-,-,-,-,-,-,-,-,18
+Successful,58710,58710,-,19683,20728,-,367,367,-
+Timeout,-,-,-,1044,-,-,6,6,-
+Other Exception,-,-,-,76,83,-,1,1,-
+Sliced code result differs from original,-,-,-,33,25,-,-,-,-

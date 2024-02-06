@@ -35,31 +35,31 @@ i = 9
         if_begin = get_trace()[4]
         self.assertEqual('p_if_begin', if_begin['type'])
         self.assertIn('p_if_begin', if_begin['info'])
-        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3)", if_begin['control_dep'])
+        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3, ['i'])", if_begin['control_dep'])
         self.assertEqual(['i'], if_begin['data_dep'])
 
         # i = 7
         assignment_trace = get_trace()[5]
         self.assertEqual('p_assignment', assignment_trace['type'])
-        self.assertEqual("4: p_if_begin p_condition(4, 'i == 4', ['i'], i == 4)", assignment_trace['control_dep'])
+        self.assertEqual("4: p_if_begin p_condition(4, 'i == 4', ['i'], i == 4, ['i'])", assignment_trace['control_dep'])
 
         # end if i == 4:
         if_end = get_trace()[6]
         self.assertEqual('p_if_end', if_end['type'])
         self.assertIn('p_if_end', if_end['info'])
-        self.assertEqual("4: p_if_begin p_condition(4, 'i == 4', ['i'], i == 4)", if_end['control_dep'])
+        self.assertEqual("4: p_if_begin p_condition(4, 'i == 4', ['i'], i == 4, ['i'])", if_end['control_dep'])
         self.assertEqual(['i'], if_end['data_dep'])
 
         # i = 8
         assignment_trace = get_trace()[7]
         self.assertEqual('p_assignment', assignment_trace['type'])
-        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3)", assignment_trace['control_dep'])
+        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3, ['i'])", assignment_trace['control_dep'])
 
         # end if i > 3:
         if_end = get_trace()[8]
         self.assertEqual('p_if_end', if_end['type'])
         self.assertIn('p_if_end', if_end['info'])
-        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3)", if_end['control_dep'])
+        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3, ['i'])", if_end['control_dep'])
         self.assertEqual(['i'], if_end['data_dep'])
 
         # i = 9
@@ -87,13 +87,13 @@ i = 8
         # i = 7
         assignment_trace = get_trace()[3]
         self.assertEqual('p_assignment', assignment_trace['type'])
-        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3)", assignment_trace['control_dep'])
+        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3, ['i'])", assignment_trace['control_dep'])
 
         # if i > 3:
         if_end = get_trace()[4]
         self.assertEqual('p_if_end', if_end['type'])
         self.assertIn('p_if_end', if_end['info'])
-        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3)", if_end['control_dep'])
+        self.assertEqual("3: p_if_begin p_condition(3, 'i > 3', ['i'], i > 3, ['i'])", if_end['control_dep'])
         self.assertEqual(['i'], if_end['data_dep'])
 
         # i = 8
@@ -160,13 +160,13 @@ i = 8
         # i = 7
         assignment_trace = get_trace()[3]
         self.assertEqual('p_assignment', assignment_trace['type'])
-        self.assertEqual("3: p_else_begin p_condition(3, 'i > 3', ['i'], i > 3)", assignment_trace['control_dep'])
+        self.assertEqual("3: p_else_begin p_condition(3, 'i > 3', ['i'], i > 3, ['i'])", assignment_trace['control_dep'])
 
         # if i > 3:
         p_else_end = get_trace()[4]
         self.assertEqual('p_else_end', p_else_end['type'])
         self.assertIn('p_else_end', p_else_end['info'])
-        self.assertEqual("3: p_else_begin p_condition(3, 'i > 3', ['i'], i > 3)", p_else_end['control_dep'])
+        self.assertEqual("3: p_else_begin p_condition(3, 'i > 3', ['i'], i > 3, ['i'])", p_else_end['control_dep'])
         self.assertEqual(['i'], p_else_end['data_dep'])
 
         # i = 8
@@ -199,26 +199,26 @@ i = 8
         if_begin = get_trace()[5]
         self.assertEqual('p_if_begin', if_begin['type'])
         self.assertIn('p_if_begin', if_begin['info'])
-        self.assertEqual("4: p_else_begin p_condition(4, 'i > 3', ['i'], i > 3)", if_begin['control_dep'])
+        self.assertEqual("4: p_else_begin p_condition(4, 'i > 3', ['i'], i > 3, ['i'])", if_begin['control_dep'])
         self.assertEqual(['j'], if_begin['data_dep'])
 
         # i = 7
         assignment_trace = get_trace()[6]
         self.assertEqual('p_assignment', assignment_trace['type'])
-        self.assertEqual("6: p_if_begin p_condition(6, 'j < 3', ['j'], j < 3)", assignment_trace['control_dep'])
+        self.assertEqual("6: p_if_begin p_condition(6, 'j < 3', ['j'], j < 3, ['i'])", assignment_trace['control_dep'])
 
         # elif i < 3:
         if_end = get_trace()[7]
         self.assertEqual('p_if_end', if_end['type'])
         self.assertIn('p_if_end', if_end['info'])
-        self.assertEqual("6: p_if_begin p_condition(6, 'j < 3', ['j'], j < 3)", if_end['control_dep'])
+        self.assertEqual("6: p_if_begin p_condition(6, 'j < 3', ['j'], j < 3, ['i'])", if_end['control_dep'])
         self.assertEqual(['j'], if_end['data_dep'])
 
         # if i > 3:
         p_else_end = get_trace()[8]
         self.assertEqual('p_else_end', p_else_end['type'])
         self.assertIn('p_else_end', p_else_end['info'])
-        self.assertEqual("4: p_else_begin p_condition(4, 'i > 3', ['i'], i > 3)", p_else_end['control_dep'])
+        self.assertEqual("4: p_else_begin p_condition(4, 'i > 3', ['i'], i > 3, ['i'])", p_else_end['control_dep'])
         self.assertEqual(['i'], p_else_end['data_dep'])
 
         # i = 8

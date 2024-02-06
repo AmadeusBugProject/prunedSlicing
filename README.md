@@ -1,6 +1,5 @@
 # prunedSlicing
-This is a proof of concept implementation of pruned slicing as discussed in our paper *"Pruning Boolean Expressions to Shorten
-Dynamic Slices"*.
+This is a proof of concept implementation of pruned slicing as discussed in our paper *"Pruning Boolean Expressions to Shorten Dynamic and Relevant Slices"* by Thomas Hirsch and Birgit Hofer.
 
 ## Example
 A very simplistic usage example of our slicer is implemented in [slicing_demo.py](slicing_demo.py).
@@ -9,9 +8,8 @@ A very simplistic usage example of our slicer is implemented in [slicing_demo.py
 Our python ast based tracer can be found in [ast_tree_tracer/trace.py](ast_tree_tracer/trace.py).
 Our dynamic slicer and pruned slicer implementations are located in [slicing/slice.py](slicing/slice.py).
 
-## Conda environment
-The exact Conda environment we performed our evaluations with can be reproduced by importing [environment_pinned.yml](environment_pinned.yml).
-For portability reasons we also provide a minimal Conda environment in [environment_portable.yml](environment_portable.yml).
+## Environment
+For portability reasons we provide a minimal Conda environment in [environment.yml](environment.yml) and a [requirements.txt](requirements.txt).
 
 ## Test suite
 The test suite uses the python library `timeout-decorator`, that relies on OS signal functionality only on *nix OS's to cancel tests exceeding a timeout value specified in [constants.py](constants.py).
@@ -32,7 +30,7 @@ The benchmarks code and inputs can be found in [benchmark](benchmark).
 - Object orientation (tracing/slicing only relevant instances of the same class).
     If there are multiple instances of a class, and the user is only interested to slice for a variable that is connected to one of these instances, the tracing as it is now implemented does not distinguish the code that runs in a class method based on its caller.
 - Lambdas
-- Varargs in function calls (kind of)
+- Varargs in function calls
 - Named args in function calls
 - Single file tracing only
 - Class variables (not tb. confused with instance variables) of a class are not supported
@@ -47,3 +45,5 @@ The benchmarks code and inputs can be found in [benchmark](benchmark).
 - Changes of parameters within function calls 
 
 A listing for excluded keywords and constructs can be found in [ast_tree_tracer/transformer_utils.py::check_for_unsupported_constructs](ast_tree_tracer/transformer_utils.py)
+
+

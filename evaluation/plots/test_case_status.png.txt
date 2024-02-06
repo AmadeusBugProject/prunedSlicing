@@ -1,7 +1,0 @@
-Successful                                  81275
-Not executable                               3749
-Not supported                                1422
-Timeout during sliced code execution         1135
-Other Exception                               142
-Sliced code result differs from original       48
-General Timeout                                21

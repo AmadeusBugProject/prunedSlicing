@@ -41,13 +41,13 @@ i = 8
         # c += 1
         assignment = get_trace()[3]
         self.assertEqual('p_aug_assignment', assignment['type'])
-        self.assertEqual("3: p_while_begin test: p_condition(3, 'c < 2', ['c'], c < 2)", assignment['control_dep'])
+        self.assertEqual("3: p_while_begin test: p_condition(3, 'c < 2', ['c'], c < 2, ['c'])", assignment['control_dep'])
 
         # while(c < 2):
         while_end = get_trace()[4]
         self.assertEqual('p_while_end', while_end['type'])
         self.assertIn('p_while_end', while_end['info'])
-        self.assertEqual("3: p_while_begin test: p_condition(3, 'c < 2', ['c'], c < 2)", while_end['control_dep'])
+        self.assertEqual("3: p_while_begin test: p_condition(3, 'c < 2', ['c'], c < 2, ['c'])", while_end['control_dep'])
         self.assertEqual(['c'], while_end['data_dep'])
         self.assertEqual([], while_end['data_target'])
 
@@ -63,7 +63,7 @@ i = 8
         while_end = get_trace()[8]
         self.assertEqual('p_while_end', while_end['type'])
         self.assertIn('p_while_end', while_end['info'])
-        self.assertEqual("3: p_while_begin test: p_condition(3, 'c < 2', ['c'], c < 2)", while_end['control_dep'])
+        self.assertEqual("3: p_while_begin test: p_condition(3, 'c < 2', ['c'], c < 2, ['c'])", while_end['control_dep'])
         self.assertEqual(['c'], while_end['data_dep'])
         self.assertEqual([], while_end['data_target'])
 
@@ -76,7 +76,7 @@ i = 8
         self.assertEqual([], while_begin['data_target'])
 
         # i = 8
-        assignment = get_trace()[10]
+        assignment = get_trace()[13]
         self.assertEqual('p_assignment', assignment['type'])
         self.assertEqual('module', assignment['control_dep'])
 
@@ -104,26 +104,26 @@ i = 8
         # c += 1
         assignment = get_trace()[4]
         self.assertEqual('p_aug_assignment', assignment['type'])
-        self.assertEqual("4: p_while_begin test: p_condition(4, 'c < 2', ['c'], c < 2)", assignment['control_dep'])
+        self.assertEqual("4: p_while_begin test: p_condition(4, 'c < 2', ['c'], c < 2, ['c', 'a'])", assignment['control_dep'])
 
         # while(a < 2):
         while_begin = get_trace()[6]
         self.assertEqual('p_while_begin', while_begin['type'])
         self.assertIn('p_while_begin', while_begin['info'])
-        self.assertEqual("4: p_while_begin test: p_condition(4, 'c < 2', ['c'], c < 2)", while_begin['control_dep'])
+        self.assertEqual("4: p_while_begin test: p_condition(4, 'c < 2', ['c'], c < 2, ['c', 'a'])", while_begin['control_dep'])
         self.assertEqual(['a'], while_begin['data_dep'])
         self.assertEqual([], while_begin['data_target'])
 
         # a += 1
         assignment = get_trace()[7]
         self.assertEqual('p_aug_assignment', assignment['type'])
-        self.assertEqual("6: p_while_begin test: p_condition(6, 'a < 2', ['a'], a < 2)", assignment['control_dep'])
+        self.assertEqual("6: p_while_begin test: p_condition(6, 'a < 2', ['a'], a < 2, ['a'])", assignment['control_dep'])
 
         # while(a < 2):
         while_end = get_trace()[8]
         self.assertEqual('p_while_end', while_end['type'])
         self.assertIn('p_while_end', while_end['info'])
-        self.assertEqual("6: p_while_begin test: p_condition(6, 'a < 2', ['a'], a < 2)", while_end['control_dep'])
+        self.assertEqual("6: p_while_begin test: p_condition(6, 'a < 2', ['a'], a < 2, ['a'])", while_end['control_dep'])
         self.assertEqual(['a'], while_end['data_dep'])
         self.assertEqual([], while_end['data_target'])
 
@@ -131,7 +131,7 @@ i = 8
         while_begin = get_trace()[10]
         self.assertEqual('p_while_begin', while_begin['type'])
         self.assertIn('p_while_begin', while_begin['info'])
-        self.assertEqual("4: p_while_begin test: p_condition(4, 'c < 2', ['c'], c < 2)", while_begin['control_dep'])
+        self.assertEqual("4: p_while_begin test: p_condition(4, 'c < 2', ['c'], c < 2, ['c', 'a'])", while_begin['control_dep'])
         self.assertEqual(['a'], while_begin['data_dep'])
         self.assertEqual([], while_begin['data_target'])
 
@@ -139,12 +139,12 @@ i = 8
         while_end = get_trace()[14]
         self.assertEqual('p_while_end', while_end['type'])
         self.assertIn('p_while_end', while_end['info'])
-        self.assertEqual("4: p_while_begin test: p_condition(4, 'c < 2', ['c'], c < 2)", while_end['control_dep'])
+        self.assertEqual("4: p_while_begin test: p_condition(4, 'c < 2', ['c'], c < 2, ['c', 'a'])", while_end['control_dep'])
         self.assertEqual(['c'], while_end['data_dep'])
         self.assertEqual([], while_end['data_target'])
 
         # i = 8
-        assignment = get_trace()[21]
+        assignment = get_trace()[24]
         self.assertEqual('p_assignment', assignment['type'])
         self.assertEqual('module', assignment['control_dep'])
 

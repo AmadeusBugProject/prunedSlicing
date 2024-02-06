@@ -25,7 +25,7 @@ i = 8
         log.print_trace(get_trace())
 
         # for i in range(0, stop):
-        for_begin = get_trace()[1]
+        for_begin = get_trace()[2]
         self.assertEqual('p_for_begin', for_begin['type'])
         self.assertIn('p_for_begin', for_begin['info'])
         self.assertEqual('module', for_begin['control_dep'])
@@ -33,11 +33,11 @@ i = 8
         self.assertEqual(['i'], for_begin['data_target'])
 
         # break
-        cont = get_trace()[10]
+        cont = get_trace()[11]
         self.assertEqual('p_break', cont['type'])
-        self.assertEqual("4: p_if_begin p_condition(4, 'not i % 2', ['i'], not i % 2)", cont['control_dep'])
+        self.assertEqual("4: p_if_begin p_condition(4, 'not i % 2', ['i'], not i % 2, [])", cont['control_dep'])
 
         # i = 8
-        assignment = get_trace()[11]
+        assignment = get_trace()[12]
         self.assertEqual('p_assignment', assignment['type'])
         self.assertEqual('module', assignment['control_dep'])

@@ -2,7 +2,7 @@ from ast_tree_tracer import trace
 from ast_tree_tracer.trace_container import get_trace
 from helpers.Logger import Logger
 from slicing.code_from_slice import code_from_slice_ast
-from slicing.slice import get_pruned_slice
+from slicing.slice import get_pruned_slice, get_pruned_relevant_slice, get_relevant_slice, get_dynamic_slice
 
 log = Logger()
 
@@ -23,9 +23,24 @@ z = a and b and (c == 3 or d > 5)"""
     line = 5
     log.pretty_print_slice_criteria(line, variable)
 
-    pruned_slice, pruned_rel_bool_ops, pruned_func_param_removal = get_pruned_slice(exec_trace, variable, line)
+    # Dynamic slice:
+    slice, rel_bool_ops, func_param_removal = get_dynamic_slice(exec_trace, variable, line)
+    sliced_code = code_from_slice_ast(python_code, slice, rel_bool_ops, exec_trace, func_param_removal)
+    log.pretty_print_code(sliced_code)
 
-    sliced_code = code_from_slice_ast(python_code, pruned_slice, pruned_rel_bool_ops, exec_trace, pruned_func_param_removal)
+    # Pruned dynamic slice:
+    slice, rel_bool_ops, func_param_removal = get_pruned_slice(exec_trace, variable, line)
+    sliced_code = code_from_slice_ast(python_code, slice, rel_bool_ops, exec_trace, func_param_removal)
+    log.pretty_print_code(sliced_code)
+
+    # Relevant slice:
+    slice, rel_bool_ops, func_param_removal = get_relevant_slice(exec_trace, variable, line)
+    sliced_code = code_from_slice_ast(python_code, slice, rel_bool_ops, exec_trace, func_param_removal)
+    log.pretty_print_code(sliced_code)
+
+    # Pruned relevant slice:
+    slice, rel_bool_ops, func_param_removal = get_pruned_relevant_slice(exec_trace, variable, line)
+    sliced_code = code_from_slice_ast(python_code, slice, rel_bool_ops, exec_trace, func_param_removal)
     log.pretty_print_code(sliced_code)
 
 

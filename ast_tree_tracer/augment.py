@@ -56,9 +56,9 @@ def p_aug_assign(lineno, target, op, value, data_dep, data_target):
     return value
 
 
-def p_if_label(lineno, test, data_dep, label):
+def p_if_label(lineno, test, data_dep, pot_dep, label):
     tag = str(lineno) + ': ' + label + ' ' + test
-    trace_container.trace(lineno, label, label + ' ' + test, data_dep=data_dep)
+    trace_container.trace(lineno, label, label + ' ' + test, data_dep=data_dep, pot_dep=pot_dep)
     control_dependency.ctrl_add_flow_control(tag)
 
 
@@ -87,9 +87,9 @@ def p_return(lineno, value, data_dep):
     return value
 
 
-def p_condition(lineno, test, data_dep, value):
+def p_condition(lineno, test, data_dep, value, pot_dep):
     tag = str(lineno) + ': ' + 'p_condition ' + str(value)
-    trace_container.trace(lineno, 'p_condition', test + ' => ' + str(value), data_target=[], data_dep=data_dep)
+    trace_container.trace(lineno, 'p_condition', test + ' => ' + str(value), data_target=[], data_dep=data_dep, pot_dep=pot_dep)
     control_dependency.ctrl_add_expression(tag)
     return value
 
@@ -112,15 +112,15 @@ def p_continue(lineno):
     control_dependency.ctrl_add_break_or_continue(tag)
 
 
-def p_for_label(lineno, target, iter, data_dep, data_target, label):
+def p_for_label(lineno, target, iter, data_dep, data_target, pot_dep, label):
     tag = str(lineno) + ': ' + label + ' target: ' + target + ' iter:' + iter
-    trace_container.trace(lineno, label, label + ' target: ' + target + ' iter:' + iter, data_dep=data_dep, data_target=data_target)
+    trace_container.trace(lineno, label, label + ' target: ' + target + ' iter:' + iter, data_dep=data_dep, pot_dep=pot_dep, data_target=data_target)
     control_dependency.ctrl_add_flow_control(tag)
 
 
-def p_while_label(lineno, test, data_dep, label):
+def p_while_label(lineno, test, data_dep, pot_dep, label):
     tag = str(lineno) + ': ' + label + ' test: ' + test
-    trace_container.trace(lineno, label, label + ' test: ' + test, data_dep=data_dep)
+    trace_container.trace(lineno, label, label + ' test: ' + test, data_dep=data_dep, pot_dep=pot_dep)
     control_dependency.ctrl_add_flow_control(tag)
 
 
@@ -128,6 +128,7 @@ def p_class_def(lineno, name, lineno_range):
     tag = str(lineno) + ': p_class_def ' + name
     trace_container.trace(lineno, 'p_class_def', 'p_class_def ' + name, class_range=lineno_range)
     control_dependency.ctrl_add_expression(tag)
+
 
 def p_yield(lineno, value, data_dep):
     tag = str(lineno) + ': ' + 'p_yield ' + str(value)
